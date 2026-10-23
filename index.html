@@ -18,6 +18,13 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
  <script>
+  const SUPABASE_URL = 'https://lfobakwirswebcnwdkrb.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_lmNxTXVRyuZN5gDM5F1ucQ_9Khxx3Lu';
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
 const resources=[
  {title:'Business Studies: operations overview',subject:'Business',type:'🗒️',detail:'Study notes · HSC'},
  {title:'Financial strategies explained',subject:'Business',type:'📊',detail:'Concept guide · HSC'},
