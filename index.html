@@ -16,7 +16,8 @@
 <footer class="footer"><div class="wrap footer-row"><span><strong style="color:var(--site-on-background)">✦ puuStudy</strong> · Learn, share, grow.</span><span>A concept prototype · Demo interactions only</span><span>Made for curious minds 🌱</span></div></footer>
 <div class="modal-backdrop" id="modal-backdrop"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><h2 id="modal-title">Welcome</h2><button class="filter" id="close-modal" aria-label="Close dialog">✕</button></div><p id="modal-description">Help us shape a supportive study space.</p><form id="modal-form"><div id="modal-fields"></div><div class="notice" id="modal-notice"></div><div class="modal-actions"><button type="button" class="btn secondary" id="cancel-modal">Cancel</button><button type="submit" class="btn" id="modal-submit">Continue</button></div></form></section></div>
 </div>
-<script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+ <script>
 const resources=[
  {title:'Business Studies: operations overview',subject:'Business',type:'🗒️',detail:'Study notes · HSC'},
  {title:'Financial strategies explained',subject:'Business',type:'📊',detail:'Concept guide · HSC'},
