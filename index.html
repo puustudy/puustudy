@@ -49,4 +49,48 @@ function closeModal(){$('#modal-backdrop').classList.remove('show')}
 document.querySelectorAll('[data-modal]').forEach(b=>b.addEventListener('click',()=>openModal(b.dataset.modal)));$('#close-modal').addEventListener('click',closeModal);$('#cancel-modal').addEventListener('click',closeModal);$('#modal-backdrop').addEventListener('click',e=>{if(e.target.id==='modal-backdrop')closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});$('#resource-search').addEventListener('input',renderResources);document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{activeFilter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));renderResources()}));
 $('#modal-form').addEventListener('submit',async e=>{e.preventDefault();const data=Object.fromEntries(new FormData(e.currentTarget));const note=$('#modal-notice');if(currentModal==='join'){const {data:authData,error}=await supabaseClient.auth.signUp({email:data.email,password:data.password,options:{data:{display_name:data.name,interest:data.interest},emailRedirectTo:'https://puustudy.github.io/puustudy/'}});if(error){note.textContent=error.message;note.classList.add('show');return}note.textContent=authData.session?'Account created and signed in!':'Account created. Check your email to confirm your address, then log in.';note.classList.add('show');return}if(currentModal==='login'){const {error}=await supabaseClient.auth.signInWithPassword({email:data.email,password:data.password});if(error){note.textContent=error.message;note.classList.add('show');return}note.textContent='You are signed in!';note.classList.add('show');return}if(currentModal==='resource'){resources.unshift({title:data.title,subject:data.subject,type:'📄',detail:data.detail||'Community resource'});renderResources();note.textContent='Resource added to this preview.';note.classList.add('show');setTimeout(closeModal,1000)}else if(currentModal==='post'){discussions.unshift({initial:(data.name||'S').charAt(0).toUpperCase(),title:data.title,meta:(data.name||'Community member')+' · '+data.category,replies:0});renderDiscussions();note.textContent='Topic added to the demo community board.';note.classList.add('show');setTimeout(closeModal,1000)}else{note.textContent=currentModal==='join'?'Thanks for your interest! This is a prototype, so no account or email has been saved.':'This prototype has no live account system yet.';note.classList.add('show')}});
 renderResources();renderDiscussions();
-</script></body></html>
+function updateAuthNavigation(session) {
+  const actions = document.querySelector('#auth-actions');
+  if (!actions) return;
+
+  if (session && session.user) {
+    const email = session.user.email || 'My account';
+
+    actions.innerHTML = `
+      <span style="align-self:center;font-size:12px;margin-right:8px">
+        ${esc(email)}
+      </span>
+      <button class="btn secondary" id="dashboard-btn">Dashboard</button>
+      <button class="btn" id="logout-btn">Log out</button>
+    `;
+
+    document.querySelector('#dashboard-btn').onclick = () => {
+      document.querySelector('.hero-card').scrollIntoView({
+        behavior: 'smooth'
+      });
+    };
+
+    document.querySelector('#logout-btn').onclick = async () => {
+      const { error } = await supabaseClient.auth.signOut();
+      if (error) alert(error.message);
+    };
+  } else {
+    actions.innerHTML = `
+      <button class="btn secondary" data-modal="login">Log in</button>
+      <button class="btn" data-modal="join">Join us ↗</button>
+    `;
+
+    actions.querySelectorAll('[data-modal]').forEach(button => {
+      button.onclick = () => openModal(button.dataset.modal);
+    });
+  }
+}
+
+supabaseClient.auth.onAuthStateChange((_event, session) => {
+  updateAuthNavigation(session);
+});
+
+supabaseClient.auth.getSession().then(({ data, error }) => {
+  if (!error) updateAuthNavigation(data.session);
+});
+ </script></body></html>
